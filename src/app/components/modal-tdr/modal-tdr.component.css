@@ -1,0 +1,14 @@
+.modal-dialog {
+  max-width: min(95vw, 1200px);
+}
+.modal-body {
+  /* Si tu contenido se corta por padding, puedes reducirlo: */
+  /* padding: 0.5rem; */
+}
+
+.ratio-16x9 {
+  min-height: 60vh;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f9fa;
+}

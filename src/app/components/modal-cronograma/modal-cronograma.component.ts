@@ -1,0 +1,189 @@
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { AppComponent } from 'src/app/app.component';
+import { ApiService } from 'src/app/services/api.service';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-modal-cronograma',
+  templateUrl: './modal-cronograma.component.html',
+  styleUrls: ['./modal-cronograma.component.css']
+})
+export class ModalCronogramaComponent implements OnInit {
+    titulopant : string = "CRONOGRAMA DE CONVOCATORIA";
+    cnv_id : string = '0';
+  
+    cnv_obsanu : string = '';
+    dataTrazabilidad: any;
+    
+    showGuardararchivo:boolean=false;
+    showArc:boolean=false;
+    
+    selectedFile: File | null = null;
+    uploading = false;
+  
+    safecroUrl: SafeResourceUrl | null = null;
+  
+    @Input() convocatoria: any;
+  
+    @Output() cancelClicked = new EventEmitter<void>(); 
+    
+    constructor(
+      private api: ApiService,
+      private appComponent: AppComponent,
+      private sanitizer: DomSanitizer
+    ) {
+      this.appComponent.login = false;
+    }
+  
+    ngOnInit() {
+      let url = '';
+      if (this.convocatoria && this.convocatoria.cnv_filcro != null) {
+        url = String(this.convocatoria.cnv_filcro).trim();
+      }
+  
+      if (!url) {
+        this.showGuardararchivo = true;
+        this.showArc = false;
+        return;
+      }
+  
+      this.showGuardararchivo = false;
+      this.showArc = true;
+  
+      var isPdf = /\.pdf(\?|$)/i.test(url);
+      var embedUrl = isPdf
+        ? url + '#toolbar=1&navpanes=0&scrollbar=1'
+        : 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
+  
+      this.safecroUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    }
+  
+    onFileSelected(e: any) {
+      var files = e && e.target ? e.target.files : null;
+      this.selectedFile = (files && files.length > 0) ? files[0] : null;
+    }
+  
+    cancelar() {
+      this.cancelClicked.emit();
+    }
+  
+    GuardarArchivocro() {
+      if (!this.selectedFile) {
+        Swal.fire('Archivo requerido', 'Selecciona un archivo .pdf', 'warning');
+        return;
+      }
+  
+      var name = this.selectedFile.name || '';
+      var parts = name.split('.');
+      var ext = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+  
+      var allowed = ['pdf', 'doc', 'docx'];
+      if (allowed.indexOf(ext) === -1) {
+        Swal.fire('Formato no permitido', 'Solo se aceptan PDF.', 'error');
+        return;
+      }
+  
+      Swal.fire({
+        title: 'Mensaje',
+        html: '¿Seguro de registrar el cro?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ACEPTAR',
+        cancelButtonText: 'CANCELAR',
+      }).then((result) => {
+        if (!result.isConfirmed) return;
+        this.uploading = true;
+        var formData = new FormData();
+        formData.append('p_cnv_id', String(this.convocatoria ? this.convocatoria.cnv_id : 0));
+        formData.append('p_cnv_usumov',String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0'));
+        formData.append('p_cnv_filext', ext);
+        formData.append('file', this.selectedFile);
+        this.api.getconvocatoriacroreg(formData).subscribe({
+          next: (data: any) => {
+            this.uploading = false;
+            var row = Array.isArray(data) ? data[0] : (data && data[0] ? data[0] : data);
+            console.log(data);
+            var error = row && row.error != null ? Number(row.error) : -1;
+            var mensa = row && row.mensa ? String(row.mensa) : '';
+            if(error == 0){
+              Swal.fire({
+                title: 'Exito',
+                html: mensa || 'Cronograma registrado correctamente.',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar',
+              }).then((result) => {
+                if (result.value) {
+                  setTimeout(() => {
+                    this.cancelClicked.emit();
+                  }, 300);
+                }
+              });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: data[0].mensa.trim(),
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Aceptar',
+                });
+            }
+          },
+          error: (err) => {
+            this.uploading = false;
+            Swal.fire('Error', 'No se pudo registrar el Cronograma', 'error');
+            console.error(err);
+          },
+        });
+      });
+    }
+    
+    Anular(){
+      const dataPost = {
+        p_cnv_id:String(this.convocatoria ? this.convocatoria.cnv_id : 0),
+        p_cnv_usumov:String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0')
+      };
+  
+      Swal.fire({
+        title: 'Mensaje',
+        html: "¿Seguro de Guardar Datos?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ACEPTAR',
+        cancelButtonText: 'CANCELAR'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.api.getconvocatoriacroanu(dataPost).subscribe((data: any) => {
+            if(data[0].error == 0){
+              Swal.fire({
+                title: 'Exito',
+                html: data[0].mensa.trim(),
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar',
+              }).then((result) => {
+                if (result.value) {
+                  setTimeout(() => {
+                    this.cancelClicked.emit();
+                  }, 300);
+                }
+              });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: data[0].mensa.trim(),
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Aceptar',
+                });
+            }
+          });
+        }
+      })
+    }
+}

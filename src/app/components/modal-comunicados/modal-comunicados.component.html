@@ -1,0 +1,53 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{titulopant}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="cancelar()"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="row" *ngIf="showGuardararchivo">
+          <div class="card card-animate">
+            <div class="card-body">
+              <h5 class="fs-15 mb-3">Subir archivo</h5>
+              <div class="input-group">
+                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" accept=".pdf"/>
+              </div>  
+              <div class="mt-2 small text-muted" *ngIf="selectedFile">
+                Seleccionado: {{ selectedFile?.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="showArc">
+            <div class="card card-animate">
+                <div class="ratio ratio-16x9">
+                    <iframe
+                        [src]="safecomUrl"
+                        title="com Convocatoria"
+                        loading="lazy"
+                        allowfullscreen
+                        style="border:0">
+                    </iframe>
+                </div>
+                <div class="mt-2 text-center">
+                    <a [href]="convocatoria && convocatoria.cnv_filcom ? convocatoria.cnv_filcom : '#'" target="_blank" rel="noopener">
+                        ABRIR EN NUEVA PESTAÑA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-success btn-sm" *ngIf="showGuardararchivo" (click)="GuardarArchivocom()" [disabled]="!selectedFile || uploading">
+    <i class="bx bx-log-in"></i>
+    {{ uploading ? 'Guardando...' : 'Guardar Archivo' }}
+  </button>
+  <button class="btn btn-warning btn-sm" *ngIf="showArc" (click)="Anular()">
+    <i class="bx bx-log-in"></i> Anular com
+  </button>
+  <button class="btn btn-danger btn-sm" (click)="cancelar()">
+    <i class="bx bx-log-in"></i> Cancelar
+  </button>
+</div>

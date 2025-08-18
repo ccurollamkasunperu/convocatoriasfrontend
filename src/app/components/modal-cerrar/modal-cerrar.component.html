@@ -1,0 +1,31 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{titulopant}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="cancelar()"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-12 col-md-12">
+        <div class="card card-animate">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="text-start flex-grow-1">
+                        <p class="text-uppercase fw-medium text-mutedfs-16 mb-0"><b>CONVOCATORIA :</b> # {{ convocatoria?.cnv_numero}}</p>
+                        <p class="text-uppercase fw-medium text-mutedfs-13 mb-0"><b>DESCRIPCION :</b> {{ convocatoria?.cnv_descri}}</p>
+                        <p class="text-uppercase fw-medium text-mutedfs-13 mb-0"><b>ESTADO :</b> {{ convocatoria?.est_descri}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-md-12">
+        <div>
+            <label for="cnv_obsanu" class="form-label">OBSERVACIONES</label>
+            <textarea name="cnv_obsanu" id="cnv_obsanu" [(ngModel)]="cnv_obsanu" class="form-control" ng-pattern="/^[a-zA-Z]*$/" oninput="this.value = this.value.toUpperCase()" rows="6"></textarea>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-success btn-sm" (click)="ProcesarRegistro()"><i class="bx bx-power-off"></i> CERRAR TICKET</button>
+  <button class="btn btn-danger btn-sm" (click)="cancelar()"><i class="bx bx-log-in"></i> CANCELAR</button>
+</div>

@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{titulopant}} : #{{ convocatoria?.cnv_numero}}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="cancelar()"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-12 col-md-12">
+        <div class="card card-animate">
+            <div class="card-body">
+                <div data-simplebar style="max-height: 500px; overflow-y: auto;" class="p-3 pt-0">
+                    <ul class="acitivity-timeline-2 list-unstyled mb-0">
+                        <li *ngFor="let traz of dataTrazabilidad">
+                            <h6 class="fs-14" [innerHTML]="traz.trz_mensaj"></h6>
+                            <p class="mb-1">
+                            <i class="ri-user-3-line"></i> {{ traz.trz_usunom }}
+                            </p>
+                            <p class="mb-1">
+                            <i class="ri-calendar-line"></i> {{ traz.trz_fecreg | date:'fullDate' }}
+                            </p>
+                            <p class="text-muted mb-2" *ngIf="traz.trz_observ">
+                            <i class="ri-file-text-line"></i> {{ traz.trz_observ }}
+                            </p>
+                            <hr class="my-2" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-danger btn-sm btn-block" (click)="cancelar()"><i class="bx bx-log-in"></i> CERRAR</button>
+</div>
