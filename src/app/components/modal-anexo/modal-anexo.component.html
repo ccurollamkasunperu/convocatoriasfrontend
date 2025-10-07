@@ -10,7 +10,7 @@
             <div class="card-body">
               <h5 class="fs-15 mb-3">Subir archivo</h5>
               <div class="input-group">
-                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" accept=".pdf"/>
+                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" accept=".pdf,.xlsx,.xls,.doc,.docx"/>
               </div>  
               <div class="mt-2 small text-muted" *ngIf="selectedFile">
                 Seleccionado: {{ selectedFile?.name }}

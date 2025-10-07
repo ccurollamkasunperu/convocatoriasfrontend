@@ -9,8 +9,8 @@ import { Router } from "@angular/router";
 export class ApiService {
   constructor(private httpClient: HttpClient, private router: Router) { }
 
-  urlApi: string = "http://localhost/convocatoriasbackend/public/api/";
-  urlApiAuth: string = "http://localhost/convocatoriasbackend/public/api/";
+  urlApi: string = "http://10.250.55.118/convocatoriasbackend/public/api/";
+  urlApiAuth: string = "http://10.250.55.118/convocatoriasbackend/public/api/";
   //urlApiAuth: string = "http://127.0.0.1:8000/api/";
 
   getQuery(query: string) {
@@ -211,6 +211,13 @@ export class ApiService {
       })
     );
   }
+  getconvocatoriacomunicadosel(data: object) {
+    return this.postQuery("convocatoria/convocatoriacomunicadosel", data).pipe(
+      map((data) => {
+        return data;
+      })
+    );
+  }
   getconvocatoriaanx(data: object) {
     return this.postQuery("convocatoria/convocatoriaanx", data).pipe(
       map((data) => {
@@ -233,8 +240,22 @@ export class ApiService {
       })
     );
   }
+  getconvocatoriapub(data: object) {
+    return this.postQuery("convocatoria/convocatoriapub", data).pipe(
+      map((data) => {
+        return data;
+      })
+    );
+  }
   getconvocatoriaanu(data: object) {
     return this.postQuery("convocatoria/convocatoriaanu", data).pipe(
+      map((data) => {
+        return data;
+      })
+    );
+  }
+  gettipoconvocatoriasel(data: object) {
+    return this.postQuery("convocatoria/tipoconvocatoriasel", data).pipe(
       map((data) => {
         return data;
       })

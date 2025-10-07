@@ -134,6 +134,8 @@ export class ModalTdrComponent implements OnInit {
           }
         },
         error: (err) => {
+          // If the interceptor already handled session expiration (401), don't show duplicate errors here
+          if (err && err.status === 401) return;
           this.uploading = false;
           Swal.fire('Error', 'No se pudo registrar el TDR', 'error');
           console.error(err);
@@ -142,50 +144,99 @@ export class ModalTdrComponent implements OnInit {
     });
   }
   
-  Anular(){
-    const dataPost = {
-      p_cnv_id:String(this.convocatoria ? this.convocatoria.cnv_id : 0),
-      p_cnv_usumov:String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0')
-    };
+  Anular() {
+    this.mostrarObservacionPromptTdr('');
+  }
 
+  private mostrarObservacionPromptTdr(valorInicial: string) {
     Swal.fire({
-      title: 'Mensaje',
-      html: "¿Seguro de Guardar Datos?",
-      icon: 'warning',
+      title: '<b>OBSERVACIÓN</b>',
+      text: 'Ingrese el motivo o comentario',
+      input: 'textarea',
+      inputValue: valorInicial,
+      inputPlaceholder: 'Ej.: Anulación por ...',
+      inputAttributes: { autocapitalize: 'off' },
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'ACEPTAR',
-      cancelButtonText: 'CANCELAR'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.api.getconvocatoriatdranu(dataPost).subscribe((data: any) => {
-          if(data[0].error == 0){
-            Swal.fire({
-              title: 'Exito',
-              html: data[0].mensa.trim(),
-              icon: 'success',
-              confirmButtonColor: '#3085d6',
-              confirmButtonText: 'Aceptar',
-            }).then((result) => {
-              if (result.value) {
-                setTimeout(() => {
-                  this.cancelClicked.emit();
-                }, 300);
-              }
-            });
-          }else{
-            Swal.fire({
+      confirmButtonText: 'CONTINUAR',
+      cancelButtonText: 'CANCELAR',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      inputValidator: (value: string) => {
+        if (!value || !String(value).trim()) {
+          return 'La observación es obligatoria';
+        }
+        return undefined as any;
+      }
+    }).then((inputResult: any) => {
+      if (!inputResult.isConfirmed) return;
+
+      var observacion = String(inputResult.value || '').trim();
+
+      Swal.fire({
+        title: 'Mensaje',
+        html: '¿Seguro de <b>ANULAR TDR</b>?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ACEPTAR',
+        cancelButtonText: 'CANCELAR',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      }).then((confirmRes: any) => {
+        if (!confirmRes.isConfirmed) {
+          this.mostrarObservacionPromptTdr(observacion);
+          return;
+        }
+
+        var dataPost = {
+          p_cnv_id: String(this.convocatoria ? this.convocatoria.cnv_id : 0),
+          p_cnv_usumov: String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0'),
+          p_cnv_observ: observacion
+        };
+
+        this.api.getconvocatoriatdranu(dataPost).subscribe(
+          (data: any) => {
+            var ok = data && data[0] && data[0].error == 0;
+            var mensa = (data && data[0] && data[0].mensa) ? String(data[0].mensa).trim() : '';
+
+            if (ok) {
+              Swal.fire({
+                title: 'Éxito',
+                html: mensa || 'Operación exitosa.',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+              }).then((r: any) => {
+                if (r && r.value) {
+                  setTimeout(() => this.cancelClicked.emit(), 300);
+                }
+              });
+            } else {
+              Swal.fire({
                 title: 'Error',
-                text: data[0].mensa.trim(),
+                text: mensa || 'Ocurrió un error en la operación.',
                 icon: 'error',
                 confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Aceptar',
+                confirmButtonText: 'Aceptar'
               });
+            }
+          },
+          (err: any) => {
+            if (err && err.status === 401) return;
+            Swal.fire({
+              title: 'Error',
+              text: 'Ocurrió un problema al procesar la solicitud.',
+              icon: 'error',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Aceptar'
+            });
+            console.error(err);
           }
-        });
-      }
-    })
+        );
+      });
+    });
   }
+
   
 }

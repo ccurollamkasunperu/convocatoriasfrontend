@@ -5,36 +5,39 @@
 <div class="modal-body">
   <div class="row">
     <div class="col-xl-12 col-md-12 col-sm-12">
+      <table class="table table-nowrap table-sm text-center" *ngIf="dataComunicados.length > 0">
+          <thead>
+              <tr>
+                  <th scope="col">ARCHIVO</th>
+                  <th scope="col">ACCIONES</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let item of dataComunicados">
+                  <th scope="row"><i class="ri-file-text-line"></i> COMUNICADO DEL <small>{{item.cnc_fecreg}}</small></th>
+                  <td>
+                    <button class="btn btn-success btn-sm mr-1" style="padding: 0px 3px;" (click)="AbrirVisorComunicado(item.cnc_filcom, item.cnc_id)" title="VISUALIZAR COMUNICADO"><i class="ri-eye-line"></i></button>
+                    <!-- <button class="btn btn-danger btn-sm" style="padding: 0px 3px;" (click)="Anular(item.cnc_id)" title="ANULAR COMUNICADO"><i class="ri-close-line"></i></button> -->
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="row" *ngIf="showGuardararchivo">
           <div class="card card-animate">
             <div class="card-body">
-              <h5 class="fs-15 mb-3">Subir archivo</h5>
+              <h5 class="fs-15 mb-3">SUBIR COMUNICADO</h5>
               <div class="input-group">
-                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" accept=".pdf"/>
+                <input type="file" class="form-control" id="comunicadoinputfile" (change)="onFileSelected($event)" accept=".pdf"/>
               </div>  
               <div class="mt-2 small text-muted" *ngIf="selectedFile">
                 Seleccionado: {{ selectedFile?.name }}
               </div>
             </div>
           </div>
-        </div>
-        <div class="row" *ngIf="showArc">
-            <div class="card card-animate">
-                <div class="ratio ratio-16x9">
-                    <iframe
-                        [src]="safecomUrl"
-                        title="com Convocatoria"
-                        loading="lazy"
-                        allowfullscreen
-                        style="border:0">
-                    </iframe>
-                </div>
-                <div class="mt-2 text-center">
-                    <a [href]="convocatoria && convocatoria.cnv_filcom ? convocatoria.cnv_filcom : '#'" target="_blank" rel="noopener">
-                        ABRIR EN NUEVA PESTAÑA
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
   </div>
@@ -50,4 +53,38 @@
   <button class="btn btn-danger btn-sm" (click)="cancelar()">
     <i class="bx bx-log-in"></i> Cancelar
   </button>
+</div>
+
+<!-- Modal visor de COMUNICADO -->
+<div class="modal fade" id="modalVisorComunicado" tabindex="-1" aria-labelledby="visorComunicadoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="visorComunicadoTitle">COMUNICADO</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cerrarVisor()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="ratio ratio-16x9">
+          <iframe
+            [src]="safecomUrl"
+            title="Comunicado"
+            loading="lazy"
+            allowfullscreen
+            style="border:0">
+          </iframe>
+        </div>
+        <div class="mt-2 text-center">
+          <a [href]="viewerRawUrl" target="_blank" rel="noopener">ABRIR EN NUEVA PESTAÑA</a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-sm" (click)="AnularDesdeVisor()">
+          <i class="bx bx-log-in"></i> Anular Comunicado
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="cerrarVisor()">
+          <i class="bx bx-log-in"></i> Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

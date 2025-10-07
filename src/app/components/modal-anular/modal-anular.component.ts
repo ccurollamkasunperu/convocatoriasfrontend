@@ -43,7 +43,7 @@ export class ModalAnularComponent implements OnInit {
 
     Swal.fire({
       title: 'Mensaje',
-      html: "¿Seguro de Guardar Datos?",
+      html: "¿Seguro de <b>ANULAR</b>?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

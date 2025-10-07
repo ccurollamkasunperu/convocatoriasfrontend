@@ -24,7 +24,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row ">
-            <div class="col-xxl-3 col-md-6">
+            <div class="col-xxl-2 col-md-6">
               <div>
                 <label for="cnv_numero" class="form-label">N° CONVOCATORIA</label>
                 <div class="input-group input-group-sm">
@@ -33,16 +33,25 @@
                 </div>
               </div>
             </div>
-            <div class="col-xxl-3 col-md-6">
+            <div class="col-xxl-2 col-md-6">
               <div>
                 <label for="cnv_fecini" class="form-label">DESDE</label>
                 <input type="date" class="form-control form-control-sm" id="cnv_fecini" [(ngModel)]="cnv_fecini">
               </div>
             </div>
-            <div class="col-xxl-3 col-md-6">
+            <div class="col-xxl-2 col-md-6">
               <div>
                 <label for="cnv_fecfin" class="form-label">HASTA</label>
                 <input type="date" class="form-control form-control-sm" id="cnv_fecfin" [(ngModel)]="cnv_fecfin">
+              </div>
+            </div>
+            <div class="col-xxl-2 col-md-6">
+              <div>
+                <label for="tic_id" class="form-label">Tipo de Convocatoria</label>
+                <ng-select class="mayus" [(ngModel)]="tic_id">
+                    <ng-option value="0">Seleccionar Tipo de Convocatoria</ng-option>
+                    <ng-option *ngFor="let item of dataTipoConvocatoria" [value]="item.tic_id">{{item.tic_descri}}</ng-option>
+                </ng-select>
               </div>
             </div>
             <div class="col-xxl-3 col-md-6">
@@ -86,24 +95,23 @@
                 <tr *ngFor="let item of dataConvocatoria" style="text-align: center;">
                   <td>{{item.cnv_numero}}</td>
                   <td class="cell-wrap text-justify">{{item.cnv_descri}}</td>
-                  <td class="cell-wrap"><button [disabled]="item.cnv_chktdr == 0" type="button" (click)="getIdButton('TDR', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="TERMINO DE REFERENCIA" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
-                      <span *ngIf="item.cnv_filtdr !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">-</span>
+                  <td class="cell-wrap"><button type="button" (click)="getIdButton('TDR', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="TERMINO DE REFERENCIA" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
+                      <span *ngIf="item.cnv_filtdr !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">&nbsp;</span>
                     </button>
                   </td>
-                  <td class="cell-wrap"><button [disabled]="item.cnv_chkcro == 0" type="button" (click)="getIdButton('CRO', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="CRONOGRAMA" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
-                      <span *ngIf="item.cnv_filanx !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">-</span>
+                  <td class="cell-wrap"><button type="button" (click)="getIdButton('CRO', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="CRONOGRAMA" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
+                      <span *ngIf="item.cnv_filcro !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">&nbsp;</span>
                     </button>
                   </td>
-                  <td class="cell-wrap"><button [disabled]="item.cnv_chkanx == 0" type="button" (click)="getIdButton('ANE', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="ANEXO" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
-                      <span *ngIf="item.cnv_filcro !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">-</span>
+                  <td class="cell-wrap"><button type="button" (click)="getIdButton('ANE', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="ANEXO" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
+                      <span *ngIf="item.cnv_filanx !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">&nbsp;</span>
                     </button>
                   </td>
-                  <td class="cell-wrap"><button [disabled]="item.cnv_chkcom == 0" type="button" (click)="getIdButton('COM', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="COMUNICADOS" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
-                      <span *ngIf="item.cnv_filres !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">-</span>
+                  <td class="cell-wrap"><button type="button" (click)="getIdButton('COM', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="COMUNICADOS" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
                     </button>
                   </td>
-                  <td class="cell-wrap"><button [disabled]="item.cnv_chkres == 0" type="button" (click)="getIdButton('RES', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="RESULTADOS" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
-                      <span *ngIf="item.cnv_filcom !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">-</span>
+                  <td class="cell-wrap"><button type="button" (click)="getIdButton('RES', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="RESULTADOS" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
+                      <span *ngIf="item.cnv_filres !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">&nbsp;</span>
                     </button>
                   </td>
                   <td>{{item.cnv_feccnv}}</td>
@@ -114,11 +122,16 @@
                             <i class="ri-more-fill align-middle"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                          <li *ngIf="item.cnv_chkver == 1"><a class="dropdown-item edit-item-btn" (click)="getIdButton(4, item)">VER</a></li>
-                          <li *ngIf="item.cnv_chkedt == 1"><a class="dropdown-item edit-item-btn" (click)="ConvocatoriaEdit(item.cnv_id)">EDITAR</a></li>
-                          <li *ngIf="item.cnv_chkanu == 1"><a class="dropdown-item edit-item-btn" (click)="getIdButton(3, item)">ANULAR</a></li>
-                          <li *ngIf="item.cnv_chktrz == 1"><a class="dropdown-item edit-item-btn" (click)="getIdButton(11, item)">TRAZABILIDAD</a></li>
-                          <li *ngIf="item.cnv_chkcer == 1"><a class="dropdown-item edit-item-btn" (click)="getIdButton(6, item)">CERRAR</a></li>
+                          <li *ngIf="item.cnv_chkver"><a class="dropdown-item edit-item-btn" (click)="getIdButton(4, item)">VER</a></li>
+                          <li *ngIf="item.cnv_chkedt"><a class="dropdown-item edit-item-btn" (click)="ConvocatoriaEdit(item.cnv_id)">EDITAR</a></li>
+                          <li *ngIf="item.cnv_chkanu"><a class="dropdown-item edit-item-btn" (click)="getIdButton(3, item)">ANULAR</a></li>
+                          <li *ngIf="item.cnv_chkasg"><a class="dropdown-item edit-item-btn" (click)="getIdButton(6, item)">ASIGNAR</a></li>
+                          
+                          <li *ngIf="item.cnv_chkpub == 1"><a class="dropdown-item edit-item-btn" (click)="getIdButton(15, item)">PUBLICAR</a></li>
+                          <li *ngIf="item.cnv_chkpub == 2"><a class="dropdown-item edit-item-btn" (click)="getIdButton(15, item)">DESPUBLICAR</a></li>
+                          
+                          <li *ngIf="item.cnv_chktrz"><a class="dropdown-item edit-item-btn" (click)="getIdButton(11, item)">TRAZABILIDAD</a></li>
+                          <li *ngIf="item.cnv_chkcer"><a class="dropdown-item edit-item-btn" (click)="getIdButton(10, item)">CERRAR</a></li>
                         </ul>
                     </div>
                   </td>

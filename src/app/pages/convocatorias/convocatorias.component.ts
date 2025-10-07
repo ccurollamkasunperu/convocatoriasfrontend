@@ -45,6 +45,7 @@ export class ConvocatoriasComponent implements OnInit {
 
   //INICIO PARAMETROS
   dataConvocatoria:any;
+  dataTipoConvocatoria:any;
 
   cnv_id:string='';
   cnv_numero:string='';
@@ -54,6 +55,7 @@ export class ConvocatoriasComponent implements OnInit {
   cnv_fecfin:string='';
   cnv_activo:string='';
   ard_id:string='0';
+  tic_id:string='0';
 
   //FIN DE PARAMETROS
 
@@ -152,9 +154,10 @@ export class ConvocatoriasComponent implements OnInit {
   ngOnInit(): void {
     this.SetMesIniFin();
     this.usu_id = localStorage.getItem('usuario');
-    this.loadDataProceso();
+    this.loadTipoConvocatoria();
     this.getObjetoMenu();
     this.ObtenerObjId();
+    this.loadDataProceso();
   }
 
   ngOnDestroy(): void {
@@ -177,6 +180,17 @@ export class ConvocatoriasComponent implements OnInit {
     }
   }
 
+  loadTipoConvocatoria() {
+    const data_post = {
+      p_tic_id: 0,
+      p_tic_activo: 1
+    };
+
+    this.api.gettipoconvocatoriasel(data_post).subscribe((data: any) => {
+      this.dataTipoConvocatoria = data;
+    });
+  }
+
   loadDataProceso() {
     this.loading = true;
 
@@ -186,8 +200,10 @@ export class ConvocatoriasComponent implements OnInit {
       p_est_id:     (this.est_id == null || this.est_id === '') ? 0 : parseInt(this.est_id),
       p_usu_id:     (localStorage.getItem('usuario') == null || localStorage.getItem('usuario') === '' ) ? 0 : parseInt(localStorage.getItem('usuario')),
       p_ard_id:     (this.ard_id == null || this.ard_id === '') ? 0 : parseInt(this.ard_id),
+      p_tic_id:     (this.tic_id == null || this.tic_id === '') ? 0 : parseInt(this.tic_id),
       p_cnv_fecini: this.cnv_fecini,
       p_cnv_fecfin: this.cnv_fecfin,
+      p_jsn_permis: this.jsn_permis,
       p_cnv_activo: 9
     };
 
@@ -212,7 +228,13 @@ export class ConvocatoriasComponent implements OnInit {
         }
         this.loading = false;
       },
-      error: () => {
+      error: (err: any) => {
+        // Si el interceptor ya manejó expiración de sesión (401), no mostrar alertas adicionales
+        if (err && err.status === 401) {
+          this.loading = false;
+          this.exportarHabilitado = false;
+          return;
+        }
         this.loading = false;
         this.exportarHabilitado = false;
         swal.fire('Error', 'Ocurrió un error al cargar los datos', 'error');
@@ -225,6 +247,7 @@ export class ConvocatoriasComponent implements OnInit {
     console.log('Ruta actual:', this.ruta);
 
     const match = this.ObjetoMenu.find(item => item.obj_enlace === this.ruta);
+    console.log('Objeto de menú coincidente:', match);
     if (match) {
       this.objid = match.obj_id;
       this.jsn_permis = match.jsn_permis;
@@ -312,8 +335,56 @@ export class ConvocatoriasComponent implements OnInit {
     }
   }
 
+  PublicDespublic(item: any) {
+      const dataPost = {
+        p_cnv_id:(item.cnv_id == null || item.cnv_id === '') ? 0 : parseInt(item.cnv_id),
+        p_usu_id:parseInt(localStorage.getItem("usuario"))
+      };
+  
+      swal.fire({
+        title: 'Mensaje',
+        html: "¿Seguro de Guardar Datos?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ACEPTAR',
+        cancelButtonText: 'CANCELAR'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.api.getconvocatoriapub(dataPost).subscribe((data: any) => {
+            if(data[0].error == 0){
+              swal.fire({
+                title: 'Exito',
+                html: data[0].mensa.trim(),
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar',
+              }).then((result) => {
+                if (result.value) {
+                  setTimeout(() => {
+                    this.loadDataProceso();
+                  }, 300);
+                }
+              });
+            }else{
+              swal.fire({
+                  title: 'Error',
+                  text: data[0].mensa.trim(),
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Aceptar',
+                });
+            }
+          });
+        }
+      })
+    }
+
   getIdButton(bot_id: any, item: any) {
+    
     this.selectedConvocatoria = item;
+
     switch (bot_id) {
       case 2:
         this.modalRef = this.modalService.show(this.OpenModalEditarConvocatoria);
@@ -325,13 +396,16 @@ export class ConvocatoriasComponent implements OnInit {
         this.modalRef = this.modalService.show(this.OpenModalVerConvocatoria);
         break;
       case 6:
-        this.modalRef = this.modalService.show(this.OpenModalCerrarConvocatoria);
+        this.modalRef = this.modalService.show(this.OpenModalVerConvocatoria);
         break;
-      case 3:
-        this.modalRef = this.modalService.show(this.OpenModalAnularConvocatoria);
+      case 10:
+        this.modalRef = this.modalService.show(this.OpenModalCerrarConvocatoria);
         break;
       case 11:
         this.modalRef = this.modalService.show(this.OpenModalTrazabilidadConvocatoria);
+        break;
+      case 15:
+        this.PublicDespublic(item);
         break;
       case 'TDR':
         this.modalRef = this.modalService.show(this.OpenModalConvocatoriaTDR,{ class: 'modal-xl modal-dialog-centered' });

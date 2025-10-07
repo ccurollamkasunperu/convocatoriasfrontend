@@ -50,7 +50,21 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-xl-12 col-md-12 mb-3">
+            <div class="col-xxl-6 col-md-6">
+              <div>
+                <label for="cnv_fhoini" class="form-label">FECHA Y HORA DE INICIO</label>
+                <input type="datetime-local" class="form-control form-control-sm" id="cnv_fhoini" [(ngModel)]="cnv_fhoini">
+              </div>
+            </div>
+            <div class="col-xxl-6 col-md-6">
+              <div>
+                <label for="cnv_fhofin" class="form-label">FECHA Y HORA FIN</label>
+                <input type="datetime-local" class="form-control form-control-sm" id="cnv_fhofin" [(ngModel)]="cnv_fhofin">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-6 col-md-12">
                 <div>
                     <label for="ard_id" class="form-label">AREA</label>
                     <ng-select class="mayus" [(ngModel)]="ard_id">
@@ -59,6 +73,17 @@
                     </ng-select>
                 </div>
             </div>
+            <div class="col-xl-6 col-md-12">
+              <div>
+                <label for="tic_id" class="form-label">TIPO CONVOCATORIA</label>
+                <ng-select class="mayus" [(ngModel)]="tic_id">
+                    <ng-option value="0">Seleccionar Tipo de Convocatoria</ng-option>
+                    <ng-option *ngFor="let item of dataTipoConvocatoria" [value]="item.tic_id">{{item.tic_descri}}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-xxl-12 col-md-6">
               <div>
                 <label for="cnv_observ" class="form-label">OBSERVACIONES</label>

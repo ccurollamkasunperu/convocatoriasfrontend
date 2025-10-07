@@ -45,6 +45,7 @@ export class ConvocatoriaComponent implements OnInit {
   inputsDisabled = false;
 
   dataArea:any;
+  dataTipoConvocatoria:any;
 
   cnv_id:string='';
   usu_id:string='';
@@ -53,7 +54,11 @@ export class ConvocatoriaComponent implements OnInit {
   cnv_descri:string='';
   cnv_observ:string='';
 
+  cnv_fhoini:string='';
+  cnv_fhofin:string='';
+
   ard_id:string='0';
+  tic_id:Number;
 
   constructor(
     private router: Router,
@@ -61,11 +66,14 @@ export class ConvocatoriaComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer
-  ) {}
+  ) {
+
+  }
 
   ngOnInit() {
     this.loading = true;
     this.loadArea();
+    this.loadTipoConvocatoria();
     if (this.demoMode) {
       this.preloadDemoFiles();
     }
@@ -111,6 +119,18 @@ export class ConvocatoriaComponent implements OnInit {
       this.dataArea = data;
     });
   }
+  
+  loadTipoConvocatoria() {
+    const data_post = {
+      p_tic_id: 0,
+      p_tic_activo: 1
+    };
+
+    this.api.gettipoconvocatoriasel(data_post).subscribe((data: any) => {
+      this.dataTipoConvocatoria = data;
+      this.tic_id=2;
+    });
+  }
 
   loadData() {
     this.loading = true;
@@ -121,6 +141,7 @@ export class ConvocatoriaComponent implements OnInit {
       p_est_id:     0,
       p_usu_id:     0,
       p_ard_id:     0,
+      p_tic_id:     0,
       p_cnv_fecini: '',
       p_cnv_fecfin: '',
       p_cnv_activo: 9
@@ -132,6 +153,7 @@ export class ConvocatoriaComponent implements OnInit {
       this.cnv_numero = data[0].cnv_numero;
       this.cnv_descri = data[0].cnv_descri;
       this.ard_id     = data[0].ard_id;
+      this.tic_id     = data[0].tic_id;
       this.cnv_observ = data[0].cnv_observ;
 
     }, _ => {});
@@ -298,7 +320,12 @@ export class ConvocatoriaComponent implements OnInit {
     formData.append("p_cnv_id", this.cnv_id === '0' ? "0" : this.cnv_id);
     formData.append("p_usu_id", String(localStorage.getItem("usuario")));
     formData.append("p_ard_id", this.ard_id === '0' ? "0" : this.ard_id);
+    formData.append("p_tic_id", String(this.tic_id) === '0' ? "0" : String(this.tic_id));
     formData.append("p_cnv_numero", String(this.cnv_numero));
+
+    formData.append("p_cnv_fhoini", String(this.cnv_fhoini));
+    formData.append("p_cnv_fhofin", String(this.cnv_fhofin));
+    
     formData.append("p_cnv_feccnv", String(this.cnv_feccnv));
     formData.append("p_cnv_descri", String(this.cnv_descri));
     formData.append("p_cnv_observ", String(this.cnv_observ));

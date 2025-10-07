@@ -49,6 +49,43 @@ export class LoginComponent implements OnInit {
     this.api.getIniciarSesion(data_post).subscribe({
       next: (res: any) => {
         localStorage.setItem('token', res.token);
+        // Guardar expiración del token si el backend la provee (token_exp) o si podemos extraerla del JWT
+        try {
+          let tokenExp: number | null = null;
+          if (res && (res.token_exp || res.exp || res.expires_at)) {
+            // Aceptar varias claves posibles que el backend pueda enviar
+            const candidate = res.token_exp || res.exp || res.expires_at;
+            const n = Number(candidate);
+            if (!isNaN(n)) {
+              // Si viene en milisegundos (valor muy grande), convertir a segundos
+              tokenExp = n > 1e12 ? Math.floor(n / 1000) : Math.floor(n);
+            } else {
+              const parsed = Date.parse(String(candidate));
+              if (!isNaN(parsed)) tokenExp = Math.floor(parsed / 1000);
+            }
+          }
+
+          // Si no vino expiration explícita, intentar decodificar token JWT y leer 'exp'
+          if (!tokenExp && res && res.token) {
+            const parts = String(res.token).split('.');
+            if (parts.length >= 2) {
+              const payload = parts[1];
+              const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+              const pad = base64.length % 4;
+              const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
+              const json = atob(padded);
+              const obj = JSON.parse(json);
+              if (obj && obj.exp) tokenExp = Number(obj.exp);
+            }
+          }
+
+          if (tokenExp && !isNaN(tokenExp)) {
+            localStorage.setItem('token_exp', String(tokenExp));
+          }
+        } catch (e) {
+          // No hacer nada si no se puede parsear; no queremos bloquear el login por esto
+          console.warn('No se pudo determinar token_exp:', e);
+        }
         localStorage.setItem('usuario', res.user.id);
 
         const datausuario = {
