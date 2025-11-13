@@ -34,23 +34,102 @@
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
-                            <!-- <img class="rounded-circle header-profile-user" src="/assets/images/users/avatar-1.jpg" alt="Header Avatar"> -->
                             <i class=" ri-user-3-fill" style="font-size: 20px;"></i>
                             <span class="text-start ms-xl-2">
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{usu_nomcom}}</span>
-                                <!-- <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{usu_nomcom}}</span> -->
-                                <!-- <span class="d-none d-xl-block ms-1 fs-13 text-muted user-name-sub-text">Administrador</span> -->
                             </span>
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <!-- <h6 class="dropdown-header">Bienvenido Ronaldo</h6> -->
-                        <a class="dropdown-item logOutButton" style="cursor: pointer;" (click)="delDatosSession()"><i
-                                class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle" data-key="t-logout">Cerrar Sesión</span></a>
+                        <a class="dropdown-item" style="cursor: pointer;" (click)="CambiarContrasena()">
+                            <i class="bi bi-lock-fill text-muted fs-16 align-middle me-1"></i>
+                            <span class="align-middle">Cambiar Contraseña</span>
+                        </a>
+                        <a class="dropdown-item logOutButton" style="cursor: pointer;" (click)="delDatosSession()">
+                            <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
+                             <span class="align-middle" data-key="t-logout">Cerrar Sesión</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </header>
+
+<!-- Modal: Cambiar Contraseña -->
+<ng-template #tplCambiarContrasena>
+  <div class="modal-header">
+    <h5 class="modal-title mb-0">Cambiar contraseña</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form (ngSubmit)="procesaRegistro()">
+      <div class="mb-3">
+        <label class="form-label">Contraseña anterior</label>
+        <div class="input-group">
+          <input
+            [type]="verPassAnt ? 'text' : 'password'"
+            class="form-control"
+            [(ngModel)]="contrasenaAnterior"
+            name="contrasenaAnterior"
+            autocomplete="current-password"
+            required
+            minlength="8"
+            placeholder="Ingrese contraseña anterior"
+          />
+          <button type="button" class="btn btn-outline-secondary" (click)="verPassAnt = !verPassAnt">
+            <i class="bi" [class.bi-eye]="!verPassAnt" [class.bi-eye-slash]="verPassAnt"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Nueva contraseña</label>
+        <div class="input-group">
+          <input
+            [type]="verPassNueva ? 'text' : 'password'"
+            class="form-control"
+            [(ngModel)]="contrasenaNueva"
+            name="contrasenaNueva"
+            autocomplete="new-password"
+            required
+            minlength="8"
+            placeholder="Ingrese nueva contraseña"
+          />
+          <button type="button" class="btn btn-outline-secondary" (click)="verPassNueva = !verPassNueva">
+            <i class="bi" [class.bi-eye]="!verPassNueva" [class.bi-eye-slash]="verPassNueva"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Confirmar contraseña</label>
+        <div class="input-group">
+          <input
+            [type]="verPassConf ? 'text' : 'password'"
+            class="form-control"
+            [(ngModel)]="contrasena2"
+            name="contrasena2"
+            autocomplete="new-password"
+            required
+            minlength="8"
+            placeholder="Confirmar nueva contraseña"
+          />
+          <button type="button" class="btn btn-outline-secondary" (click)="verPassConf = !verPassConf">
+            <i class="bi" [class.bi-eye]="!verPassConf" [class.bi-eye-slash]="verPassConf"></i>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="errorForm" class="alert alert-danger py-2">
+        {{ errorForm }}
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-light" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

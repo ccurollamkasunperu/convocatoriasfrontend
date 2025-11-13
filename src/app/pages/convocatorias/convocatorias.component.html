@@ -33,13 +33,13 @@
                 </div>
               </div>
             </div>
-            <div class="col-xxl-2 col-md-6">
+            <div class="col-xxl-1 col-md-6">
               <div>
                 <label for="cnv_fecini" class="form-label">DESDE</label>
                 <input type="date" class="form-control form-control-sm" id="cnv_fecini" [(ngModel)]="cnv_fecini">
               </div>
             </div>
-            <div class="col-xxl-2 col-md-6">
+            <div class="col-xxl-1 col-md-6">
               <div>
                 <label for="cnv_fecfin" class="form-label">HASTA</label>
                 <input type="date" class="form-control form-control-sm" id="cnv_fecfin" [(ngModel)]="cnv_fecfin">
@@ -51,6 +51,16 @@
                 <ng-select class="mayus" [(ngModel)]="tic_id">
                     <ng-option value="0">Seleccionar Tipo de Convocatoria</ng-option>
                     <ng-option *ngFor="let item of dataTipoConvocatoria" [value]="item.tic_id">{{item.tic_descri}}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-xxl-2 col-md-6">
+              <div>
+                <label for="cnv_activo" class="form-label">Estado</label>
+                <ng-select class="mayus" [(ngModel)]="cnv_activo">
+                    <ng-option value="1">ACTIVO</ng-option>
+                    <ng-option value="0">INACTIVO</ng-option>
+                    <ng-option value="9">TODOS</ng-option>
                 </ng-select>
               </div>
             </div>
@@ -108,6 +118,7 @@
                     </button>
                   </td>
                   <td class="cell-wrap"><button type="button" (click)="getIdButton('COM', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="COMUNICADOS" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 
+                      <span *ngIf="item.cnv_filcom !== null " class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-success">&nbsp;</span>
                     </button>
                   </td>
                   <td class="cell-wrap"><button type="button" (click)="getIdButton('RES', item)" class="btn btn-sm p-0 fs-20 btn-vertical-sm-hover" title="RESULTADOS" id="vertical-hover"> <i class="ri-file-list-3-fill" style="color: #497c7e;"></i> 

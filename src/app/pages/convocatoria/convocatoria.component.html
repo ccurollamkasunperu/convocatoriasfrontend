@@ -53,7 +53,7 @@
             <div class="col-xxl-6 col-md-6">
               <div>
                 <label for="cnv_fhoini" class="form-label">FECHA Y HORA DE INICIO</label>
-                <input type="datetime-local" class="form-control form-control-sm" id="cnv_fhoini" [(ngModel)]="cnv_fhoini">
+                <input type="date" class="form-control form-control-sm" id="cnv_fhoini" [(ngModel)]="cnv_fhoini">
               </div>
             </div>
             <div class="col-xxl-6 col-md-6">
@@ -64,16 +64,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-xl-6 col-md-12">
-                <div>
-                    <label for="ard_id" class="form-label">AREA</label>
-                    <ng-select class="mayus" [(ngModel)]="ard_id">
-                        <ng-option value="0">Seleccionar Area Solicitante</ng-option>
-                        <ng-option *ngFor="let item of dataArea" [value]="item.ard_id">{{item.ard_descri}}</ng-option>
-                    </ng-select>
-                </div>
-            </div>
-            <div class="col-xl-6 col-md-12">
+            <div class="col-xl-3 col-md-12">
               <div>
                 <label for="tic_id" class="form-label">TIPO CONVOCATORIA</label>
                 <ng-select class="mayus" [(ngModel)]="tic_id">
@@ -81,6 +72,36 @@
                     <ng-option *ngFor="let item of dataTipoConvocatoria" [value]="item.tic_id">{{item.tic_descri}}</ng-option>
                 </ng-select>
               </div>
+            </div>
+            <div class="col-xl-9 col-md-12">
+                <div>
+                    <label for="res_id" class="form-label">RESPONSABLE</label>
+                    <ng-select class="mayus" [(ngModel)]="res_id">
+                        <ng-option value="0">Seleccionar Responsable</ng-option>
+                        <ng-option *ngFor="let item of dataResponsable" [value]="item.res_id">{{item.res_nomcom}}</ng-option>
+                    </ng-select>
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xxl-12 col-md-6">
+              <div>
+                <label for="cnv_numexp" class="form-label">EXPEDIENTE</label>
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control mayus" ng-pattern="/^[a-zA-Z]*$/" oninput="this.value = this.value.toUpperCase()" placeholder="Ingrese descripción de convocatoria . . ." id="cnv_numexp" [(ngModel)]="cnv_numexp">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-12 col-md-12">
+                <div>
+                    <label for="ard_id" class="form-label">AREA</label>
+                    <ng-select class="mayus" [(ngModel)]="ard_id">
+                        <ng-option value="0">Seleccionar Area Solicitante</ng-option>
+                        <ng-option *ngFor="let item of dataArea" [value]="item.ard_id">{{item.ard_descri}}</ng-option>
+                    </ng-select>
+                </div>
             </div>
           </div>
           <div class="row">

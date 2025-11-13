@@ -76,3 +76,7 @@ tr {
 ngx-dropzone-preview {
     cursor: pointer;
 }
+
+input#cnv_import {
+    text-align: right;
+}

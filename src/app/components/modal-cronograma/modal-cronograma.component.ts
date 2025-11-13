@@ -183,7 +183,6 @@ export class ModalCronogramaComponent implements OnInit {
           allowEscapeKey: false
         }).then((confirmRes: any) => {
           if (!confirmRes.isConfirmed) {
-            // Reabrir el input con lo ya escrito
             this.mostrarObservacionPromptCro(observacion);
             return;
           }

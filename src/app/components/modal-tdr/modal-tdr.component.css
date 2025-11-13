@@ -12,3 +12,15 @@
   overflow: hidden;
   background: #f8f9fa;
 }
+
+.card-animate {
+  transition: all 0.3s ease;
+}
+
+.card-animate:hover {
+  transform: translateY(-3px);
+}
+
+.btn-outline-primary {
+  font-size: 0.85rem;
+}

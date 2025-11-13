@@ -184,8 +184,8 @@ export class ModalComunicadosComponent implements OnInit {
     });
   }
   
-  Anular(cnc_id: number) {
-    this.mostrarObservacionPromptCom('',cnc_id);
+  Anular(cnc_id?: number) {
+    this.mostrarObservacionPromptCom('', cnc_id || this.cncIdSeleccionado || 0);
   }
 
   private mostrarObservacionPromptCom(valorInicial: string,cnc_id: number = 0) {

@@ -10,7 +10,7 @@
             <div class="card-body">
               <h5 class="fs-15 mb-3">Subir archivo</h5>
               <div class="input-group">
-                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" accept=".pdf"/>
+                <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" accept=".pdf,.zip"/>
               </div>  
               <div class="mt-2 small text-muted" *ngIf="selectedFile">
                 Seleccionado: {{ selectedFile?.name }}
@@ -19,22 +19,35 @@
           </div>
         </div>
         <div class="row" *ngIf="showArc">
-            <div class="card card-animate">
-                <div class="ratio ratio-16x9">
-                    <iframe
-                        [src]="safeTdrUrl"
-                        title="TDR Convocatoria"
-                        loading="lazy"
-                        allowfullscreen
-                        style="border:0">
-                    </iframe>
-                </div>
-                <div class="mt-2 text-center">
-                    <a [href]="convocatoria && convocatoria.cnv_filtdr ? convocatoria.cnv_filtdr : '#'" target="_blank" rel="noopener">
-                        ABRIR EN NUEVA PESTAÑA
-                    </a>
-                </div>
+          <div class="card card-animate text-center p-3">
+            <div *ngIf="esPdf; else enlaceZip">
+              <div class="ratio ratio-16x9">
+                <iframe
+                  [src]="safeTdrUrl"
+                  title="TDR Convocatoria"
+                  loading="lazy"
+                  allowfullscreen
+                  style="border:0">
+                </iframe>
+              </div>
+              <div class="mt-2 text-center">
+                <a [href]="convocatoria?.cnv_filtdr" target="_blank" rel="noopener">
+                  ABRIR EN NUEVA PESTAÑA
+                </a>
+              </div>
             </div>
+            <ng-template #enlaceZip>
+              <div class="p-3">
+                <i class="bx bx-file me-2"></i>
+                <span class="fw-bold text-secondary">{{ archivoNombre }}</span>
+                <div class="mt-2">
+                  <a [href]="convocatoria?.cnv_filtdr" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
+                    <i class="bx bx-link-external"></i> Abrir archivo
+                  </a>
+                </div>
+              </div>
+            </ng-template>
+          </div>
         </div>
     </div>
   </div>

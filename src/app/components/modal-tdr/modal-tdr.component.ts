@@ -10,24 +10,24 @@ import Swal from 'sweetalert2';
   styleUrls: ['./modal-tdr.component.css']
 })
 export class ModalTdrComponent implements OnInit {
-  titulopant : string = "TDR CONVOCATORIA";
-  
-  cnv_id : string = '0';
+  titulopant: string = 'TDR CONVOCATORIA';
 
-  cnv_obsanu : string = '';
+  cnv_id: string = '0';
+  cnv_obsanu: string = '';
   dataTrazabilidad: any;
-  
-  showGuardararchivo:boolean=false;
-  showArc:boolean=false;
-  
+
+  showGuardararchivo = false;
+  showArc = false;
+
   selectedFile: File | null = null;
   uploading = false;
 
   safeTdrUrl: SafeResourceUrl | null = null;
+  archivoNombre: string = '';
+  esPdf: boolean = false;
 
   @Input() convocatoria: any;
-
-  @Output() cancelClicked = new EventEmitter<void>(); 
+  @Output() cancelClicked = new EventEmitter<void>();
   
   constructor(
     private api: ApiService,
@@ -52,12 +52,15 @@ export class ModalTdrComponent implements OnInit {
     this.showGuardararchivo = false;
     this.showArc = true;
 
-    var isPdf = /\.pdf(\?|$)/i.test(url);
-    var embedUrl = isPdf
-      ? url + '#toolbar=1&navpanes=0&scrollbar=1'
-      : 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
+    // Detectar extensión
+    const lowerUrl = url.toLowerCase();
+    this.esPdf = lowerUrl.endsWith('.pdf');
+    this.archivoNombre = url.split('/').pop() || 'archivo.zip';
 
-    this.safeTdrUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    if (this.esPdf) {
+      const embedUrl = url + '#toolbar=1&navpanes=0&scrollbar=1';
+      this.safeTdrUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    }
   }
 
   onFileSelected(e: any) {
@@ -71,7 +74,7 @@ export class ModalTdrComponent implements OnInit {
 
   GuardarArchivoTDR() {
     if (!this.selectedFile) {
-      Swal.fire('Archivo requerido', 'Selecciona un archivo .pdf/.doc/.docx', 'warning');
+      Swal.fire('Archivo requerido', 'Selecciona un archivo .pdf/.zip', 'warning');
       return;
     }
 
@@ -79,9 +82,9 @@ export class ModalTdrComponent implements OnInit {
     var parts = name.split('.');
     var ext = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
 
-    var allowed = ['pdf', 'doc', 'docx'];
+    var allowed = ['pdf', 'doc', 'docx', 'zip'];
     if (allowed.indexOf(ext) === -1) {
-      Swal.fire('Formato no permitido', 'Solo se aceptan PDF, DOC o DOCX.', 'error');
+      Swal.fire('Formato no permitido', 'Solo se aceptan PDF o ZIP.', 'error');
       return;
     }
 
@@ -134,7 +137,6 @@ export class ModalTdrComponent implements OnInit {
           }
         },
         error: (err) => {
-          // If the interceptor already handled session expiration (401), don't show duplicate errors here
           if (err && err.status === 401) return;
           this.uploading = false;
           Swal.fire('Error', 'No se pudo registrar el TDR', 'error');
@@ -162,9 +164,6 @@ export class ModalTdrComponent implements OnInit {
       allowOutsideClick: false,
       allowEscapeKey: false,
       inputValidator: (value: string) => {
-        if (!value || !String(value).trim()) {
-          return 'La observación es obligatoria';
-        }
         return undefined as any;
       }
     }).then((inputResult: any) => {

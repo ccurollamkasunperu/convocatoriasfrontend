@@ -53,7 +53,7 @@ export class ConvocatoriasComponent implements OnInit {
   usu_id:string='';
   cnv_fecini:string='';
   cnv_fecfin:string='';
-  cnv_activo:string='';
+  cnv_activo:string='1';
   ard_id:string='0';
   tic_id:string='0';
 
@@ -204,7 +204,7 @@ export class ConvocatoriasComponent implements OnInit {
       p_cnv_fecini: this.cnv_fecini,
       p_cnv_fecfin: this.cnv_fecfin,
       p_jsn_permis: this.jsn_permis,
-      p_cnv_activo: 9
+      p_cnv_activo: (this.cnv_activo == null || this.cnv_activo === '') ? 0 : parseInt(this.cnv_activo)
     };
 
     this.api.getconvocatoriasel(data_post).subscribe({

@@ -45,12 +45,18 @@ export class ConvocatoriaComponent implements OnInit {
   inputsDisabled = false;
 
   dataArea:any;
+  dataResponsable:any;
   dataTipoConvocatoria:any;
 
   cnv_id:string='';
   usu_id:string='';
   cnv_numero:string='';
   cnv_feccnv:string='';
+  res_id:string='0';
+
+  cnv_import:string='0';
+  cnv_numexp:string='';
+
   cnv_descri:string='';
   cnv_observ:string='';
 
@@ -73,6 +79,7 @@ export class ConvocatoriaComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.loadArea();
+    this.loadResponsable();
     this.loadTipoConvocatoria();
     if (this.demoMode) {
       this.preloadDemoFiles();
@@ -120,6 +127,21 @@ export class ConvocatoriaComponent implements OnInit {
     });
   }
   
+  loadResponsable() {
+    const data_post = {
+      p_res_id : 0,
+      p_usu_id : 0,
+      p_res_apepat : '',
+      p_res_apemat : '',
+      p_res_nombre : '',
+      p_res_activo : 1
+    };
+
+    this.api.getresponsablesel(data_post).subscribe((data: any) => {
+      this.dataResponsable = data;
+    });
+  }
+  
   loadTipoConvocatoria() {
     const data_post = {
       p_tic_id: 0,
@@ -150,11 +172,16 @@ export class ConvocatoriaComponent implements OnInit {
     this.api.getconvocatoriasel(data_post).pipe(finalize(() => this.loading = false)).subscribe((data: any) => {
 
       this.cnv_feccnv = data[0].cnv_feccnv;
-      this.cnv_numero = data[0].cnv_numero;
-      this.cnv_descri = data[0].cnv_descri;
+      this.cnv_numero = data[0].cnv_numtab;
+      this.cnv_descri = data[0].cnv_destab;
       this.ard_id     = data[0].ard_id;
       this.tic_id     = data[0].tic_id;
       this.cnv_observ = data[0].cnv_observ;
+      this.cnv_fhofin = data[0].cnv_fhofin;
+      this.cnv_fhoini = data[0].cnv_fhoini;
+      this.res_id     = data[0].res_id;
+      this.cnv_import = data[0].cnv_import;
+      this.cnv_numexp = data[0].cnv_numexp;
 
     }, _ => {});
   }
@@ -212,7 +239,37 @@ export class ConvocatoriaComponent implements OnInit {
       error: (err) => console.error('Error base64-from-path:', err)
     });
   }
+  
+  onImporteInput(event: any) {
+    let value = event.target.value;
+    value = value.replace(/[^0-9.]/g, '');
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts[1];
+    }
+    const regex = /^(\d{0,8})(\.\d{0,2})?$/;
+    if (!regex.test(value)) {
+      value = value.substring(0, value.length - 1);
+    }
 
+    event.target.value = value;
+    this.cnv_import = value;
+  }
+
+  onImporteBlur(event: any) {
+    let value = event.target.value;
+    if (!value) return;
+    if (!value.includes('.')) {
+      value = value + '.00';
+    } else {
+      const [ent, dec = ''] = value.split('.');
+      if (dec.length === 0) value = `${ent}.00`;
+      else if (dec.length === 1) value = `${ent}.${dec}0`;
+    }
+    event.target.value = value;
+    this.cnv_import = value;
+    this.cnv_import = this.cnv_import.replace(',', '.');
+  }
 
   verArchivoNew(file: File) {
     var reader = new FileReader();
@@ -321,12 +378,15 @@ export class ConvocatoriaComponent implements OnInit {
     formData.append("p_usu_id", String(localStorage.getItem("usuario")));
     formData.append("p_ard_id", this.ard_id === '0' ? "0" : this.ard_id);
     formData.append("p_tic_id", String(this.tic_id) === '0' ? "0" : String(this.tic_id));
+    formData.append("p_res_id", String(this.res_id) === '0' ? "0" : String(this.res_id));
     formData.append("p_cnv_numero", String(this.cnv_numero));
 
-    formData.append("p_cnv_fhoini", String(this.cnv_fhoini));
+    formData.append("p_cnv_fhoini", String(this.cnv_fhoini + ' 00:00:00'));
     formData.append("p_cnv_fhofin", String(this.cnv_fhofin));
     
     formData.append("p_cnv_feccnv", String(this.cnv_feccnv));
+    formData.append("p_cnv_import", String(this.cnv_import));
+    formData.append("p_cnv_numexp", String(this.cnv_numexp));
     formData.append("p_cnv_descri", String(this.cnv_descri));
     formData.append("p_cnv_observ", String(this.cnv_observ));
     

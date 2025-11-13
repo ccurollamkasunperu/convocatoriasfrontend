@@ -102,7 +102,7 @@ export class MenuComponent {
 
   trackById(_i: number, n: MenuNode) { return n.id; }
 
-  private buildFullPath(parentPath: string, node: MenuNode): string {
+  public buildFullPath(parentPath: string, node: MenuNode): string {
     return parentPath ? `${parentPath}/${node.enlace}` : node.enlace;
   }
 

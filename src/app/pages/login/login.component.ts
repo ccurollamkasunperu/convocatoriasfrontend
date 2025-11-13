@@ -124,9 +124,30 @@ export class LoginComponent implements OnInit {
 
             this.api.getSeguridadpermisoobjetosel(dataMenu).subscribe({
               next: (datosMenu: any) => {
-                localStorage.setItem('objetosMenu', JSON.stringify(datosMenu));
                 this.loading = false;
-                this.router.navigate(['/convocatorias']);
+                localStorage.setItem('objetosMenu', JSON.stringify(datosMenu));
+                if (Array.isArray(datosMenu) && datosMenu.length > 0) {
+                  const primerAcceso = datosMenu.find(
+                    (obj: any) => obj && obj.obj_enlace && obj.obj_enlace.trim() !== ''
+                  );
+
+                  if (primerAcceso) {
+                    const ruta = '/' + primerAcceso.obj_enlace.trim();
+                    this.router.navigate([ruta]);
+                    return;
+                  }
+                }
+                swal.fire({
+                  icon: 'warning',
+                  title: 'Acceso denegado',
+                  text: 'El usuario no tiene accesos requeridos para esta aplicación. Por favor, comuníquese con UFTI.',
+                  confirmButtonText: 'ACEPTAR',
+                  allowOutsideClick: false
+                }).then(() => {
+                  // Limpiar sesión
+                  localStorage.clear();
+                  this.router.navigate(['/login']);
+                });
               },
               error: (err) => {
                 this.loading = false;

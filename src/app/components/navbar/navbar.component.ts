@@ -1,8 +1,8 @@
-import { Component, OnInit,TemplateRef } from "@angular/core";
+import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ApiService } from '../../services/api.service';
-import swal from "sweetalert2";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "app-navbar",
@@ -19,8 +19,20 @@ export class NavbarComponent implements OnInit {
   eqc_id: string = "";
   eqt_id: string = "";
 
-  modalRef: BsModalRef;
   contrasena:string="";
+  modalRef: BsModalRef | undefined;
+
+  // Campos del modal
+  contrasenaAnterior: string = "";
+  contrasenaNueva: string = "";
+  contrasena2: string = "";
+  verPassAnt: boolean = false;
+  verPassNueva: boolean = false;
+  verPassConf: boolean = false;
+  errorForm: string = "";
+
+  @ViewChild('tplCambiarContrasena', { static: false })
+  tplCambiarContrasena!: TemplateRef<any>;
 
   constructor(private router: Router,private modalService: BsModalService,private api: ApiService) {}
 
@@ -62,50 +74,86 @@ export class NavbarComponent implements OnInit {
 
   }
 
-  procesaRegistro(){
-    if(this.contrasena == ''){
-      swal.fire({
-        title: 'Error',
-        text: 'Debe ingresar una Contraseña a cambiar',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar',
-      });
-    }
-    else{
-      const dataPost = {
-        p_usu_id : parseInt(localStorage.usu_id),
-        p_usu_passwd : this.contrasena
-      };
+  // Abrir modal
+  CambiarContrasena() {
+    this.contrasenaAnterior = "";
+    this.contrasenaNueva = "";
+    this.contrasena2 = "";
+    this.verPassAnt = false;
+    this.verPassNueva = false;
+    this.verPassConf = false;
+    this.errorForm = "";
+    this.modalRef = this.modalService.show(this.tplCambiarContrasena, {
+      class: 'modal-md',
+      ignoreBackdropClick: true,
+      keyboard: false
+    });
+  }
 
-      swal.fire({
-        title: 'Mensaje',
-        html: "¿Seguro de Guardar Datos?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'ACEPTAR',
-        cancelButtonText: 'CANCELAR'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          /* this.api.getusuariocambiocontrasena(dataPost).subscribe((data: any) => {
+  closeModal() {
+    if (this.modalRef) { this.modalRef.hide(); }
+  }
+
+  private validarFormulario(): boolean {
+    if (!this.contrasenaAnterior || !this.contrasenaNueva || !this.contrasena2) {
+      this.errorForm = "Debe completar todos los campos.";
+      return false;
+    }
+    if (this.contrasenaNueva.length < 8) {
+      this.errorForm = "La nueva contraseña debe tener al menos 8 caracteres.";
+      return false;
+    }
+    if (this.contrasenaNueva === this.contrasenaAnterior) {
+      this.errorForm = "La nueva contraseña no puede ser igual a la anterior.";
+      return false;
+    }
+    if (this.contrasenaNueva !== this.contrasena2) {
+      this.errorForm = "Las contraseñas no coinciden.";
+      return false;
+    }
+    this.errorForm = "";
+    return true;
+  }
+
+  procesaRegistro() {
+    if (!this.validarFormulario()) return;
+
+    const usuIdStr = localStorage.getItem('usuario') || '';
+
+    const dataPost = {
+      p_usu_id: usuIdStr,
+      p_usu_pasold: this.contrasenaAnterior,
+      p_usu_pasnew: this.contrasenaNueva
+    };
+
+    Swal.fire({
+      title: 'Mensaje',
+      html: "¿Seguro de guardar datos?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ACEPTAR',
+      cancelButtonText: 'CANCELAR'
+    }).then((result) => {
+      if (result.isConfirmed) {
+          this.api.getusuariocambiocontrasena(dataPost).subscribe((data: any) => {
             if(data[0].error == 0){
-              swal.fire({
+              Swal.fire({
                 title: 'Exito',
-                text: data[0].mensa.trim(),
+                html: data[0].mensa.trim(),
                 icon: 'success',
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'Aceptar',
               }).then((result) => {
                 if (result.value) {
                   setTimeout(() => {
-                    document.getElementById('closeModal').click();
+                    this.closeModal();
                   }, 300);
                 }
               });
             }else{
-              swal.fire({
+              Swal.fire({
                   title: 'Error',
                   text: data[0].mensa.trim(),
                   icon: 'error',
@@ -113,11 +161,9 @@ export class NavbarComponent implements OnInit {
                   confirmButtonText: 'Aceptar',
                 });
             }
-          }); */
-
+          });
         }
-      })
-    }
+    });
   }
 
 }

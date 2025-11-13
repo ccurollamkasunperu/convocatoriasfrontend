@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { Router } from "@angular/router";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: "root",
@@ -9,8 +10,9 @@ import { Router } from "@angular/router";
 export class ApiService {
   constructor(private httpClient: HttpClient, private router: Router) { }
 
-  urlApi: string = "http://10.250.55.118/convocatoriasbackend/public/api/";
-  urlApiAuth: string = "http://10.250.55.118/convocatoriasbackend/public/api/";
+  // URL base de la API (definida en los environments, cambia la IP ahí)
+  urlApi: string = environment.apiUrl;
+  urlApiAuth: string = environment.apiUrl;
   //urlApiAuth: string = "http://127.0.0.1:8000/api/";
 
   getQuery(query: string) {
@@ -64,6 +66,13 @@ export class ApiService {
   }
 
 //NUEVOS ENDPOINT
+  getusuariocambiocontrasena(data: object) {
+    return this.postQuery("seguridad/cambiarclave", data).pipe(
+      map((data) => {
+        return data;
+      })
+    );
+  }
   
   getSeguridadpermisoobjetosel(data: object) {
     return this.postQuery("seguridad/permisoobjetosel", data).pipe(
@@ -97,6 +106,13 @@ export class ApiService {
   }
   getestadossel(data: object) {
     return this.postQuery("convocatoria/estadossel", data).pipe(
+      map((data) => {
+        return data;
+      })
+    );
+  }
+  getresponsablesel(data: object) {
+    return this.postQuery("convocatoria/responsablesel", data).pipe(
       map((data) => {
         return data;
       })
