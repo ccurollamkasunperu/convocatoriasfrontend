@@ -98,7 +98,7 @@ export class ModalCronogramaComponent implements OnInit {
         this.uploading = true;
         var formData = new FormData();
         formData.append('p_cnv_id', String(this.convocatoria ? this.convocatoria.cnv_id : 0));
-        formData.append('p_cnv_usumov',String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0'));
+        formData.append('p_cnv_usumov',String(sessionStorage.getItem('usuario') ? sessionStorage.getItem('usuario') : '0'));
         formData.append('p_cnv_filext', ext);
         formData.append('file', this.selectedFile);
         this.api.getconvocatoriacroreg(formData).subscribe({
@@ -160,9 +160,6 @@ export class ModalCronogramaComponent implements OnInit {
         allowOutsideClick: false,
         allowEscapeKey: false,
         inputValidator: (value: string) => {
-          if (!value || !String(value).trim()) {
-            return 'La observación es obligatoria';
-          }
           return undefined as any;
         }
       }).then((inputResult: any) => {
@@ -189,7 +186,7 @@ export class ModalCronogramaComponent implements OnInit {
 
           var dataPost = {
             p_cnv_id: String(this.convocatoria ? this.convocatoria.cnv_id : 0),
-            p_cnv_usumov: String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0'),
+            p_cnv_usumov: String(sessionStorage.getItem('usuario') ? sessionStorage.getItem('usuario') : '0'),
             p_cnv_observ: observacion
           };
 

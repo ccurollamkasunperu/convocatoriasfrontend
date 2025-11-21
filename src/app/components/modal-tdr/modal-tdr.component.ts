@@ -102,7 +102,7 @@ export class ModalTdrComponent implements OnInit {
       this.uploading = true;
       var formData = new FormData();
       formData.append('p_cnv_id', String(this.convocatoria ? this.convocatoria.cnv_id : 0));
-      formData.append('p_cnv_usumov',String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0'));
+      formData.append('p_cnv_usumov',String(sessionStorage.getItem('usuario') ? sessionStorage.getItem('usuario') : '0'));
       formData.append('p_cnv_filext', ext);
       formData.append('file', this.selectedFile);
       this.api.getconvocatoriatdrreg(formData).subscribe({
@@ -190,7 +190,7 @@ export class ModalTdrComponent implements OnInit {
 
         var dataPost = {
           p_cnv_id: String(this.convocatoria ? this.convocatoria.cnv_id : 0),
-          p_cnv_usumov: String(localStorage.getItem('usuario') ? localStorage.getItem('usuario') : '0'),
+          p_cnv_usumov: String(sessionStorage.getItem('usuario') ? sessionStorage.getItem('usuario') : '0'),
           p_cnv_observ: observacion
         };
 

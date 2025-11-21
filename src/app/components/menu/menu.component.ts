@@ -40,7 +40,7 @@ export class MenuComponent {
   }
 
   private readFromStorage(): RawItem[] {
-    const s = localStorage.getItem('objetosMenu');
+    const s = sessionStorage.getItem('objetosMenu');
     if (!s) return [];
     try { return JSON.parse(s) as RawItem[]; }
     catch { return []; }

@@ -366,7 +366,7 @@ export class ConvocatoriaComponent implements OnInit {
 
     const payload = {
       p_arc_id: f.arc_id,
-      p_arc_usumov: Number(localStorage.getItem('usuario') || 0)
+      p_arc_usumov: Number(sessionStorage.getItem('usuario') || 0)
     };
 
     this.loading = true;
@@ -375,7 +375,7 @@ export class ConvocatoriaComponent implements OnInit {
   procesaRegistro() {
     const formData = new FormData();
     formData.append("p_cnv_id", this.cnv_id === '0' ? "0" : this.cnv_id);
-    formData.append("p_usu_id", String(localStorage.getItem("usuario")));
+    formData.append("p_usu_id", String(sessionStorage.getItem("usuario")));
     formData.append("p_ard_id", this.ard_id === '0' ? "0" : this.ard_id);
     formData.append("p_tic_id", String(this.tic_id) === '0' ? "0" : String(this.tic_id));
     formData.append("p_res_id", String(this.res_id) === '0' ? "0" : String(this.res_id));

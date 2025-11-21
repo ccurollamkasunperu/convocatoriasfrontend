@@ -1,21 +1,26 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+  HostListener
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { AppComponent } from "../../app.component";
-import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
 import { ApiService } from "src/app/services/api.service";
-import { DataTableDirective } from "angular-datatables";
-import { Subject } from "rxjs";
-import { analyzeAndValidateNgModules } from "@angular/compiler";
 import swal from "sweetalert2";
 
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrls: ['./login.component.css']
+  styleUrls: ["./login.component.css"]
 })
+export class LoginComponent implements OnInit, AfterViewInit {
+  @ViewChild('loginContainer', { static: false }) loginContainer!: ElementRef;
+  @ViewChild('reminderContainer', { static: false }) reminderContainer!: ElementRef;
 
-export class LoginComponent implements OnInit {
-  txtlogspinner : string = "";
+  txtlogspinner: string = "";
   inputUsuario: string = "";
   inputPassword: string = "";
   sessionMsg: string = "";
@@ -23,7 +28,6 @@ export class LoginComponent implements OnInit {
 
   loging: string = "";
   passwd: string = "";
-
   loading: boolean = false;
 
   constructor(
@@ -36,6 +40,29 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.api.validateSession("login");
+    setTimeout(() => this.equalizeHeights(), 500);
+  }
+
+  ngAfterViewInit(): void {
+    this.equalizeHeights();
+    const img = this.reminderContainer.nativeElement.querySelector('img');
+    if (img) {
+      img.addEventListener('load', () => {
+        this.equalizeHeights();
+      });
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.equalizeHeights();
+  }
+
+  private equalizeHeights(): void {
+    if (this.loginContainer && this.reminderContainer) {
+      const loginHeight = this.loginContainer.nativeElement.offsetHeight;
+      this.reminderContainer.nativeElement.style.height = `${loginHeight}px`;
+    }
   }
 
   IniciarSesion() {
@@ -48,16 +75,13 @@ export class LoginComponent implements OnInit {
 
     this.api.getIniciarSesion(data_post).subscribe({
       next: (res: any) => {
-        localStorage.setItem('token', res.token);
-        // Guardar expiración del token si el backend la provee (token_exp) o si podemos extraerla del JWT
+        sessionStorage.setItem('token', res.token);
         try {
           let tokenExp: number | null = null;
           if (res && (res.token_exp || res.exp || res.expires_at)) {
-            // Aceptar varias claves posibles que el backend pueda enviar
             const candidate = res.token_exp || res.exp || res.expires_at;
             const n = Number(candidate);
             if (!isNaN(n)) {
-              // Si viene en milisegundos (valor muy grande), convertir a segundos
               tokenExp = n > 1e12 ? Math.floor(n / 1000) : Math.floor(n);
             } else {
               const parsed = Date.parse(String(candidate));
@@ -65,7 +89,6 @@ export class LoginComponent implements OnInit {
             }
           }
 
-          // Si no vino expiration explícita, intentar decodificar token JWT y leer 'exp'
           if (!tokenExp && res && res.token) {
             const parts = String(res.token).split('.');
             if (parts.length >= 2) {
@@ -80,13 +103,13 @@ export class LoginComponent implements OnInit {
           }
 
           if (tokenExp && !isNaN(tokenExp)) {
-            localStorage.setItem('token_exp', String(tokenExp));
+            sessionStorage.setItem('token_exp', String(tokenExp));
           }
         } catch (e) {
           // No hacer nada si no se puede parsear; no queremos bloquear el login por esto
           console.warn('No se pudo determinar token_exp:', e);
         }
-        localStorage.setItem('usuario', res.user.id);
+        sessionStorage.setItem('usuario', res.user.id);
 
         const datausuario = {
           p_usu_id: res.user.id,
@@ -107,16 +130,16 @@ export class LoginComponent implements OnInit {
               return;
             }
             const ageId = (datos && datos.length && datos[0] && datos[0].age_id != null) ? datos[0].age_id : 0;
-            localStorage.setItem('age_id', String(ageId));
+            sessionStorage.setItem('age_id', String(ageId));
 
-            localStorage.setItem('usu_apepat', datos[0].usu_apepat);
-            localStorage.setItem('usu_apemat', datos[0].usu_apemat);
-            localStorage.setItem('usu_nombre', datos[0].usu_nombre);
-            localStorage.setItem('usu_nomcom', datos[0].usu_nomcom);
-            localStorage.setItem('equ_id', datos[0].equ_id);
-            localStorage.setItem('usu_correo', datos[0].usu_correo);
-            localStorage.setItem('usu_chkadm', datos[0].usu_chkadm);
-            localStorage.setItem('age_chkall', datos[0].age_chkall);
+            sessionStorage.setItem('usu_apepat', datos[0].usu_apepat);
+            sessionStorage.setItem('usu_apemat', datos[0].usu_apemat);
+            sessionStorage.setItem('usu_nombre', datos[0].usu_nombre);
+            sessionStorage.setItem('usu_nomcom', datos[0].usu_nomcom);
+            sessionStorage.setItem('equ_id', datos[0].equ_id);
+            sessionStorage.setItem('usu_correo', datos[0].usu_correo);
+            sessionStorage.setItem('usu_chkadm', datos[0].usu_chkadm);
+            sessionStorage.setItem('age_chkall', datos[0].age_chkall);
             
             const dataMenu = {
               p_usu_id: res.user.id,
@@ -125,7 +148,7 @@ export class LoginComponent implements OnInit {
             this.api.getSeguridadpermisoobjetosel(dataMenu).subscribe({
               next: (datosMenu: any) => {
                 this.loading = false;
-                localStorage.setItem('objetosMenu', JSON.stringify(datosMenu));
+                sessionStorage.setItem('objetosMenu', JSON.stringify(datosMenu));
                 if (Array.isArray(datosMenu) && datosMenu.length > 0) {
                   const primerAcceso = datosMenu.find(
                     (obj: any) => obj && obj.obj_enlace && obj.obj_enlace.trim() !== ''
@@ -145,7 +168,7 @@ export class LoginComponent implements OnInit {
                   allowOutsideClick: false
                 }).then(() => {
                   // Limpiar sesión
-                  localStorage.clear();
+                  sessionStorage.clear();
                   this.router.navigate(['/login']);
                 });
               },

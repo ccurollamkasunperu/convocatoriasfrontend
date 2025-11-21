@@ -9,10 +9,10 @@ export class NoAuthGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(): boolean {
-    const token = localStorage.getItem('token');
-    const usu_apepat = localStorage.getItem('usu_apepat');
-    const usu_apemat = localStorage.getItem('usu_apemat');
-    const usu_nombre = localStorage.getItem('usu_nombre');
+    const token = sessionStorage.getItem('token');
+    const usu_apepat = sessionStorage.getItem('usu_apepat');
+    const usu_apemat = sessionStorage.getItem('usu_apemat');
+    const usu_nombre = sessionStorage.getItem('usu_nombre');
 
     if (token && usu_apepat && usu_apemat && usu_nombre) {
       this.router.navigate(['/dashboard']);

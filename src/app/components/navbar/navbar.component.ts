@@ -41,25 +41,25 @@ export class NavbarComponent implements OnInit {
   }
 
   getdataUsuario() {
-    this.usu_apepat = localStorage.getItem("usu_apepat");
-    this.usu_apemat = localStorage.getItem("usu_apemat");
-    this.usu_nombre = localStorage.getItem("usu_nombre");
-    this.usu_nomcom = localStorage.getItem("usu_nomcom");
-    this.eqc_id = localStorage.getItem("eqc_id");
-    this.eqt_id = localStorage.getItem("eqt_id");
+    this.usu_apepat = sessionStorage.getItem("usu_apepat");
+    this.usu_apemat = sessionStorage.getItem("usu_apemat");
+    this.usu_nombre = sessionStorage.getItem("usu_nombre");
+    this.usu_nomcom = sessionStorage.getItem("usu_nomcom");
+    this.eqc_id = sessionStorage.getItem("eqc_id");
+    this.eqt_id = sessionStorage.getItem("eqt_id");
   }
 
   delDatosSession() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('usu_apepat');
-    localStorage.removeItem('usu_apemat');
-    localStorage.removeItem('usu_nombre');
-    localStorage.removeItem('usu_nomcom');
-    localStorage.removeItem('eqc_id');
-    localStorage.removeItem('eqt_id');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('usuario');
+    sessionStorage.removeItem('usu_apepat');
+    sessionStorage.removeItem('usu_apemat');
+    sessionStorage.removeItem('usu_nombre');
+    sessionStorage.removeItem('usu_nomcom');
+    sessionStorage.removeItem('eqc_id');
+    sessionStorage.removeItem('eqt_id');
 
-    localStorage.clear();
+    sessionStorage.clear();
 
     setTimeout(() => {
       this.router.navigate(['/login']);
@@ -118,7 +118,7 @@ export class NavbarComponent implements OnInit {
   procesaRegistro() {
     if (!this.validarFormulario()) return;
 
-    const usuIdStr = localStorage.getItem('usuario') || '';
+    const usuIdStr = sessionStorage.getItem('usuario') || '';
 
     const dataPost = {
       p_usu_id: usuIdStr,

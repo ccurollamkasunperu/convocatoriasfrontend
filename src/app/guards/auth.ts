@@ -19,13 +19,13 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     // Antes de enviar la petición, validamos si existe y si el token no está expirado.
     // Si estamos en la ruta de login, permitimos la petición (por ejemplo, validateSession desde el login).
     if ((!token || this.isTokenExpired(token)) && this.router.url !== '/login') {
       // Limpieza local
-      localStorage.clear();
+      sessionStorage.clear();
 
       // Mostrar modal de sesión expirada y redirigir al login
       this.showSessionExpired();
@@ -53,7 +53,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(clonedReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && this.router.url !== '/login') {
-          localStorage.clear();
+          sessionStorage.clear();
 
           swal.fire({
             title: 'Sesión expirada',
@@ -115,7 +115,7 @@ export class AuthInterceptor implements HttpInterceptor {
   // Lee token_exp en segundos desde localStorage si existe
   private getStoredTokenExp(): number | null {
     try {
-      const te = localStorage.getItem('token_exp');
+      const te = sessionStorage.getItem('token_exp');
       if (!te) return null;
       const n = Number(te);
       return isNaN(n) ? null : n;

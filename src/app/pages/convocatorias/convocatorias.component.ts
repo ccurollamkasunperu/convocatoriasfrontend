@@ -153,7 +153,7 @@ export class ConvocatoriasComponent implements OnInit {
 
   ngOnInit(): void {
     this.SetMesIniFin();
-    this.usu_id = localStorage.getItem('usuario');
+    this.usu_id = sessionStorage.getItem('usuario');
     this.loadTipoConvocatoria();
     this.getObjetoMenu();
     this.ObtenerObjId();
@@ -198,7 +198,7 @@ export class ConvocatoriasComponent implements OnInit {
       p_cnv_id:     (this.cnv_id == null || this.cnv_id === '') ? 0 : parseInt(this.cnv_id),
       p_cnv_numero: (this.cnv_numero == null || this.cnv_numero === '') ? 0 : parseInt(this.cnv_numero),
       p_est_id:     (this.est_id == null || this.est_id === '') ? 0 : parseInt(this.est_id),
-      p_usu_id:     (localStorage.getItem('usuario') == null || localStorage.getItem('usuario') === '' ) ? 0 : parseInt(localStorage.getItem('usuario')),
+      p_usu_id:     (sessionStorage.getItem('usuario') == null || sessionStorage.getItem('usuario') === '' ) ? 0 : parseInt(sessionStorage.getItem('usuario')),
       p_ard_id:     (this.ard_id == null || this.ard_id === '') ? 0 : parseInt(this.ard_id),
       p_tic_id:     (this.tic_id == null || this.tic_id === '') ? 0 : parseInt(this.tic_id),
       p_cnv_fecini: this.cnv_fecini,
@@ -283,8 +283,22 @@ export class ConvocatoriasComponent implements OnInit {
     return this.permSet.has(botId);
   }
 
+  tieneAcciones(item: any): boolean {
+    return (
+      item.cnv_chkver ||
+      item.cnv_chkedt ||
+      item.cnv_chkanu ||
+      item.cnv_chkasg ||
+      item.cnv_chkpub === 1 ||
+      item.cnv_chkpub === 2 ||
+      item.cnv_chktrz ||
+      item.cnv_chkcer
+    );
+  }
+
+
   getObjetoMenu() {
-    const ObjetoMenu = localStorage.getItem('objetosMenu');
+    const ObjetoMenu = sessionStorage.getItem('objetosMenu');
     this.ObjetoMenu = ObjetoMenu ? JSON.parse(ObjetoMenu) : [];
   }
 
@@ -338,7 +352,7 @@ export class ConvocatoriasComponent implements OnInit {
   PublicDespublic(item: any) {
       const dataPost = {
         p_cnv_id:(item.cnv_id == null || item.cnv_id === '') ? 0 : parseInt(item.cnv_id),
-        p_usu_id:parseInt(localStorage.getItem("usuario"))
+        p_usu_id:parseInt(sessionStorage.getItem("usuario"))
       };
   
       swal.fire({

@@ -15,7 +15,7 @@ setTimeout(() => {
             g = 6,
             b = "en",
             u = document.querySelector(".navbar-menu").innerHTML,
-            y = localStorage.getItem("language");
+            y = sessionStorage.getItem("language");
         function E() {
             p(null === y ? b : y);
             var e = document.getElementsByClassName("language");
@@ -43,8 +43,8 @@ setTimeout(() => {
                     : "fr" == e
                     ? ((document.getElementById("header-lang-img").src = "assets/images/flags/french.svg"), (document.getElementById("lang-name").innerHTML = "français"))
                     : "ar" == e && ((document.getElementById("header-lang-img").src = "assets/images/flags/ae.svg"), (document.getElementById("lang-name").innerHTML = "عربى")),
-                localStorage.setItem("language", e),
-                null == (y = localStorage.getItem("language")) && p(b),
+                sessionStorage.setItem("language", e),
+                null == (y = sessionStorage.getItem("language")) && p(b),
                 (e = new XMLHttpRequest()).open("GET", "assets/lang/" + y + ".json"),
                 (e.onreadystatechange = function () {
                     var a;

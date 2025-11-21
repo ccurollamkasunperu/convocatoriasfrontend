@@ -38,7 +38,7 @@ export class ModalAnularComponent implements OnInit {
     const dataPost = {
       p_cnv_id:(this.cnv_id == null || this.cnv_id === '') ? 0 : parseInt(this.cnv_id),
       p_cnv_observ:this.cnv_obsanu,
-      p_usu_id:parseInt(localStorage.getItem("usuario"))
+      p_usu_id:parseInt(sessionStorage.getItem("usuario"))
     };
 
     Swal.fire({

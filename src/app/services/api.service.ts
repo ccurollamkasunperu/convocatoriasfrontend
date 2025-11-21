@@ -49,7 +49,7 @@ export class ApiService {
   }
 
   isLogged() {
-    let user_sess = localStorage.getItem("usu_id");
+    let user_sess = sessionStorage.getItem("usu_id");
     return user_sess != null ? true : false;
   }
 
@@ -65,7 +65,7 @@ export class ApiService {
     }
   }
 
-//NUEVOS ENDPOINT
+  //NUEVOS ENDPOINT
   getusuariocambiocontrasena(data: object) {
     return this.postQuery("seguridad/cambiarclave", data).pipe(
       map((data) => {

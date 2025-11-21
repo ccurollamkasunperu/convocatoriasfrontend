@@ -10,5 +10,6 @@ export const environment = {
 
   //DESCOMENTAR PARA USAR EN PRODUCCIÓN (COMPILAR)
   //apiUrl: 'http://10.250.55.213/convocatoriasbackend/api/'
-  apiUrl: 'https://ruranapaq.llamkasunperu.gob.pe/convocatoriasbackend/api/'
+  //apiUrl: 'https://ruranapaq.llamkasunperu.gob.pe:8001/api/'
+  apiUrl : "https://rurana.llamkasunperu.gob.pe/convocatoriasbackend/api/"
 };
